@@ -22,9 +22,9 @@ ENV BUILD_VERSION=0.1.2 \
     CUSTOM_LIST_MERGE_TYPE=append
 
 # github action 构建    
-COPY ./docker/docker_entrypoint.sh /usr/local/bin
+#COPY ./docker/docker_entrypoint.sh /usr/local/bin
 # 本地构建
-# COPY ./docker_entrypoint.sh /usr/local/bin
+COPY ./docker_entrypoint.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/docker_entrypoint.sh
 
 WORKDIR /scripts
