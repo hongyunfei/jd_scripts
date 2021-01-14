@@ -1,5 +1,5 @@
 FROM alpine
-LABEL AUTHOR="Akira <e.akimoto.akira@gmail.com>" \
+LABEL AUTHOR="Akira <hongyunfei1220a@gmail.com>" \
         VERSION=0.1.2 \
         UPDATE_CONTENT="更新内容较多，重新阅读仓库[Readme]https://gitee.com/lxk0301/jd_scripts/tree/master/docker)，更新镜像并更新配置后使用。"
 
@@ -9,7 +9,7 @@ RUN set -ex \
         && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
         && echo "Asia/Shanghai" > /etc/timezone
 
-RUN git clone https://github.com/hongyunfei/jd_scripts /scripts \
+RUN git clone https://gitee.com/lxk0301/jd_scripts /scripts \
         && cd /scripts \
         && git checkout master \
         && mkdir logs \
