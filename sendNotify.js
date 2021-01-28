@@ -1,62 +1,59 @@
 /*
- * @Author: lxk0301 https://github.com/lxk0301 
+ * @Author: LXK9301 https://github.com/LXK9301
  * @Date: 2020-08-19 16:12:40 
- * @Last Modified by: lxk0301
+ * @Last Modified by: LXK9301
  * @Last Modified time: 2021-1-7 17:52:54
  */
 const querystring = require("querystring");
 const $ = new Env();
 // =======================================微信server酱通知设置区域===========================================
 //此处填你申请的SCKEY.
-//注：此处设置github action用户填写到Settings-Secrets里面(Name输入PUSH_KEY)
+//(环境变量名 PUSH_KEY)
 let SCKEY = '';
 
 
 // =======================================QQ酷推通知设置区域===========================================
 //此处填你申请的SKEY(具体详见文档 https://cp.xuthus.cc/)
-//注：此处设置github action用户填写到Settings-Secrets里面(Name输入QQ_SKEY)
+//(环境变量名 QQ_SKEY)
 let QQ_SKEY = '';
 //此处填写私聊或群组推送，默认私聊(send[私聊]、group[群聊]、wx[个微]、ww[企微]、email[邮件])
 let QQ_MODE = 'send';
 
 // =======================================Bark App通知设置区域===========================================
 //此处填你BarkAPP的信息(IP/设备码，例如：https://api.day.app/XXXXXXXX)
-//注：此处设置github action用户填写到Settings-Secrets里面（Name输入BARK_PUSH）
 let BARK_PUSH = '';
 //BARK app推送铃声,铃声列表去APP查看复制填写
-//注：此处设置github action用户填写到Settings-Secrets里面（Name输入BARK_SOUND , Value输入app提供的铃声名称，例如:birdsong）
 let BARK_SOUND = '';
 
 
 // =======================================telegram机器人通知设置区域===========================================
 //此处填你telegram bot 的Token，例如：1077xxx4424:AAFjv0FcqxxxxxxgEMGfi22B4yh15R5uw
-//注：此处设置github action用户填写到Settings-Secrets里面(Name输入TG_BOT_TOKEN)
+//(环境变量名 TG_BOT_TOKEN)
 let TG_BOT_TOKEN = '';
 //此处填你接收通知消息的telegram用户的id，例如：129xxx206
-//注：此处设置github action用户填写到Settings-Secrets里面(Name输入TG_USER_ID)
+//(环境变量名 TG_USER_ID)
 let TG_USER_ID = '';
 
 // =======================================钉钉机器人通知设置区域===========================================
 //此处填你钉钉 bot 的webhook，例如：5a544165465465645d0f31dca676e7bd07415asdasd
-//注：此处设置github action用户填写到Settings-Secrets里面(Name输入DD_BOT_TOKEN)
+//(环境变量名 DD_BOT_TOKEN)
 let DD_BOT_TOKEN = '';
 //密钥，机器人安全设置页面，加签一栏下面显示的SEC开头的字符串
 let DD_BOT_SECRET = '';
 
 // =======================================企业微信机器人通知设置区域===========================================
 //此处填你企业微信机器人的 webhook(详见文档 https://work.weixin.qq.com/api/doc/90000/90136/91770)，例如：693a91f6-7xxx-4bc4-97a0-0ec2sifa5aaa
-//注：此处设置github action用户填写到Settings-Secrets里面(Name输入QYWX_KEY)
+//(环境变量名 QYWX_KEY)
 let QYWX_KEY = '';
 
 // =======================================企业微信应用消息通知设置区域===========================================
-//此处填你企业微信应用消息的 值(详见文档 https://work.weixin.qq.com/api/doc/90000/90135/90236)，依次填上corpid的值,corpsecret的值,touser的值,agentid的值，素材库图片id（见https://github.com/lxk0301/jd_scripts/issues/519) 注意用,号隔开，例如：wwcff56746d9adwers,B-791548lnzXBE6_BWfxdf3kSTMJr9vFEPKAbh6WERQ,mingcheng,1000001,2COXgjH2UIfERF2zxrtUOKgQ9XklUqMdGSWLBoW_lSDAdafat
+//此处填你企业微信应用消息的 值(详见文档 https://work.weixin.qq.com/api/doc/90000/90135/90236)，依次填上corpid的值,corpsecret的值,touser的值,agentid的值，素材库图片id（见https://github.com/LXK9301/jd_scripts/issues/519) 注意用,号隔开，例如：wwcff56746d9adwers,B-791548lnzXBE6_BWfxdf3kSTMJr9vFEPKAbh6WERQ,mingcheng,1000001,2COXgjH2UIfERF2zxrtUOKgQ9XklUqMdGSWLBoW_lSDAdafat
 //增加一个选择推送消息类型，用图文消息直接填写素材库图片id的值，用卡片消息就填写0(就是数字零)
-//注：此处设置github action用户填写到Settings-Secrets里面(Name输入QYWX_AM)
+//(环境变量名 QYWX_AM)
 let QYWX_AM = '';
 
 // =======================================iGot聚合推送通知设置区域===========================================
 //此处填您iGot的信息(推送key，例如：https://push.hellyw.com/XXXXXXXX)
-//注：此处设置github action用户填写到Settings-Secrets里面（Name输入IGOT_PUSH_KEY）
 let IGOT_PUSH_KEY = '';
 
 // =======================================push+设置区域=======================================
@@ -133,6 +130,7 @@ if (process.env.PUSH_PLUS_USER) {
 
 async function sendNotify(text, desp, params = {}) {
   //提供7种通知
+  desp += `\n本脚本开源免费使用 By：https://github.com/LXK9301/jd_scripts`;
   await Promise.all([
     serverNotify(text, desp),//微信server酱
     pushPlusNotify(text, desp)//pushplus(推送加)
@@ -203,6 +201,12 @@ function CoolPush(text, desp) {
         }
       }
 
+      // 已知敏感词
+      text = text.replace(/京豆/g, "豆豆");
+      desp = desp.replace(/京豆/g, "");
+      desp = desp.replace(/🐶/g, "");
+      desp = desp.replace(/红包/g, "H包");
+
       switch (QQ_MODE) {
         case "email":
           options.json = {
@@ -242,8 +246,10 @@ function CoolPush(text, desp) {
               console.log(`酷推发送${pushMode(QQ_MODE)}通知消息成功\n`)
             } else if (data.code === 400) {
               console.log(`QQ酷推(Cool Push)发送${pushMode(QQ_MODE)}推送失败：${data.msg}\n`)
+            } else if (data.code === 503) {
+              console.log(`QQ酷推出错，${data.message}：${data.data}\n`)
             }else{
-              console.log(`酷推推送异常: ${data.msg}`);
+              console.log(`酷推推送异常: ${JSON.stringify(data)}`);
             }
           }
         } catch (e) {
