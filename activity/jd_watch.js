@@ -11,17 +11,17 @@
 ============Quantumultx===============
 [task_local]
 #京东看一看
-10 9 * * * https://raw.githubusercontent.com/LXK9301/jd_scripts/master/jd_watch.js, tag=京东看一看, enabled=true
+10 9 * * * https://gitee.com/lxk0301/jd_scripts/raw/master/jd_watch.js, tag=京东看一看, enabled=true
 
 ================Loon==============
 [Script]
-cron "10 9 * * *" script-path=https://raw.githubusercontent.com/LXK9301/jd_scripts/master/jd_watch.js,tag=京东看一看
+cron "10 9 * * *" script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_watch.js,tag=京东看一看
 
 ===============Surge=================
-京东看一看 = type=cron,cronexp="10 9 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/LXK9301/jd_scripts/master/jd_watch.js
+京东看一看 = type=cron,cronexp="10 9 * * *",wake-system=1,timeout=3600,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_watch.js
 
 ============小火箭=========
-京东看一看 = type=cron,script-path=https://raw.githubusercontent.com/LXK9301/jd_scripts/master/jd_watch.js, cronexpr="10 9 * * *", timeout=3600, enable=true
+京东看一看 = type=cron,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_watch.js, cronexpr="10 9 * * *", timeout=3600, enable=true
  */
 const $ = new Env('京东看一看');
 let acceptBody = [
@@ -134,13 +134,7 @@ if ($.isNode()) {
   })
   if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {};
 } else {
-  let cookiesData = $.getdata('CookiesJD') || "[]";
-  cookiesData = jsonParse(cookiesData);
-  cookiesArr = cookiesData.map(item => item.cookie);
-  cookiesArr.reverse();
-  cookiesArr.push(...[$.getdata('CookieJD2'), $.getdata('CookieJD')]);
-  cookiesArr.reverse();
-  cookiesArr = cookiesArr.filter(item => item !== "" && item !== null && item !== undefined);
+  cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
 !(async () => {

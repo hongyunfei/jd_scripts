@@ -8,17 +8,17 @@ PUBG ,运行时间会比较久,Surge请加大timeout时间
 ============Quantumultx===============
 [task_local]
 #PUBG
-10 0 * * * https://raw.githubusercontent.com/LXK9301/jd_scripts/master/jd_pubg.js, tag=PUBG, enabled=true
+10 0 * * * https://gitee.com/lxk0301/jd_scripts/raw/master/jd_pubg.js, tag=PUBG, enabled=true
 
 ================Loon==============
 [Script]
-cron "10 0 * * *" script-path=https://raw.githubusercontent.com/LXK9301/jd_scripts/master/jd_pubg.js,tag=PUBG
+cron "10 0 * * *" script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_pubg.js,tag=PUBG
 
 ===============Surge=================
-PUBG = type=cron,cronexp="10 0 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/LXK9301/jd_scripts/master/jd_pubg.js
+PUBG = type=cron,cronexp="10 0 * * *",wake-system=1,timeout=3600,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_pubg.js
 
 ============小火箭=========
-PUBG = type=cron,script-path=https://raw.githubusercontent.com/LXK9301/jd_scripts/master/jd_pubg.js, cronexpr="10 0 * * *", timeout=3600, enable=true
+PUBG = type=cron,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_pubg.js, cronexpr="10 0 * * *", timeout=3600, enable=true
  */
 const $ = new Env('PUBG');
 !function(n) {
@@ -131,13 +131,7 @@ if ($.isNode()) {
   })
   if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {};
 } else {
-  let cookiesData = $.getdata('CookiesJD') || "[]";
-  cookiesData = jsonParse(cookiesData);
-  cookiesArr = cookiesData.map(item => item.cookie);
-  cookiesArr.reverse();
-  cookiesArr.push(...[$.getdata('CookieJD2'), $.getdata('CookieJD')]);
-  cookiesArr.reverse();
-  cookiesArr = cookiesArr.filter(item => item !== "" && item !== null && item !== undefined);
+  cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
 const JD_API_HOST = 'https://starsingle.m.jd.com/guardianstar/';
 const inviteCodes = ['65561ad5-af72-4d1c-a5be-37b3de372b67@2d5f579d-e6d1-479e-931f-c275d602caf5@a3551e1d-fb07-40f0-b9ad-d50e4b480098@696cfa20-3719-442a-a331-0e07beaeb375@718868ed-2202-465d-b3a4-54e76b30d02a','65561ad5-af72-4d1c-a5be-37b3de372b67@2d5f579d-e6d1-479e-931f-c275d602caf5']

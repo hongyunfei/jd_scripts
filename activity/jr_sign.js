@@ -1,23 +1,23 @@
 /*
 金融打卡领年终奖
 活动时间：2020-12-8 到 2020-12-31
-更新地址：https://raw.githubusercontent.com/LXK9301/jd_scripts/master/jr_sign.js
+更新地址：https://gitee.com/lxk0301/jd_scripts/raw/master/jr_sign.js
 已支持IOS双京东账号, Node.js支持N个京东账号
 脚本兼容: QuantumultX, Surge, Loon, 小火箭，JSBox, Node.js
 ============Quantumultx===============
 [task_local]
 #金融打卡领年终奖
-10 6 * * * https://raw.githubusercontent.com/LXK9301/jd_scripts/master/jr_sign.js, tag=金融打卡领年终奖, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jd_redPacket.png, enabled=true
+10 6 * * * https://gitee.com/lxk0301/jd_scripts/raw/master/jr_sign.js, tag=金融打卡领年终奖, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jd_redPacket.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "10 6 * * *" script-path=https://raw.githubusercontent.com/LXK9301/jd_scripts/master/jr_sign.js, tag=金融打卡领年终奖
+cron "10 6 * * *" script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jr_sign.js, tag=金融打卡领年终奖
 
 ===============Surge=================
-金融打卡领年终奖 = type=cron,cronexp="10 6 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/LXK9301/jd_scripts/master/jr_sign.js
+金融打卡领年终奖 = type=cron,cronexp="10 6 * * *",wake-system=1,timeout=3600,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jr_sign.js
 
 ============小火箭=========
-金融打卡领年终奖 = type=cron,script-path=https://raw.githubusercontent.com/LXK9301/jd_scripts/master/jr_sign.js, cronexpr="10 6 * * *", timeout=3600, enable=true
+金融打卡领年终奖 = type=cron,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jr_sign.js, cronexpr="10 6 * * *", timeout=3600, enable=true
  */
 const $ = new Env('金融打卡领年终奖');
 
@@ -33,13 +33,7 @@ if ($.isNode()) {
   if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {
   };
 } else {
-  let cookiesData = $.getdata('CookiesJD') || "[]";
-  cookiesData = jsonParse(cookiesData);
-  cookiesArr = cookiesData.map(item => item.cookie);
-  cookiesArr.reverse();
-  cookiesArr.push(...[$.getdata('CookieJD2'), $.getdata('CookieJD')]);
-  cookiesArr.reverse();
-  cookiesArr = cookiesArr.filter(item => item !== "" && item !== null && item !== undefined);
+  cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
 const JD_API_HOST = 'https://api.m.jd.com/api';
 !(async () => {
