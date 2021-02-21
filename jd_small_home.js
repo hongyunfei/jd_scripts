@@ -5,7 +5,7 @@
  * @Last Modified time: 2021-1-22 14:27:20
  */
 /*
-东东小窝 https://raw.githubusercontent.com/LXK9301/jd_scripts/master/jd_small_home.js
+东东小窝 https://gitee.com/lxk0301/jd_scripts/raw/master/jd_small_home.js
 现有功能：
 做日常任务任务，每日抽奖（有机会活动京豆，使用的是免费机会，不消耗WO币）
 自动使用WO币购买装饰品可以获得京豆，分别可获得5,20，50,100,200,400,700，1200京豆）
@@ -24,17 +24,17 @@ https://h5.m.jd.com/babelDiy/Zeus/2HFSytEAN99VPmMGZ6V4EYWus1x/index.html
 ===============Quantumultx===============
 [task_local]
 #东东小窝
-16 22 * * * https://raw.githubusercontent.com/LXK9301/jd_scripts/master/jd_small_home.js, tag=东东小窝, img-url=https://raw.githubusercontent.com/58xinian/icon/master/ddxw.png, enabled=true
+16 22 * * * https://gitee.com/lxk0301/jd_scripts/raw/master/jd_small_home.js, tag=东东小窝, img-url=https://raw.githubusercontent.com/58xinian/icon/master/ddxw.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "16 22 * * *" script-path=https://raw.githubusercontent.com/LXK9301/jd_scripts/master/jd_small_home.js, tag=东东小窝
+cron "16 22 * * *" script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_small_home.js, tag=东东小窝
 
 ===============Surge=================
-东东小窝 = type=cron,cronexp="16 22 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/LXK9301/jd_scripts/master/jd_small_home.js
+东东小窝 = type=cron,cronexp="16 22 * * *",wake-system=1,timeout=3600,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_small_home.js
 
 ============小火箭=========
-东东小窝 = type=cron,script-path=https://raw.githubusercontent.com/LXK9301/jd_scripts/master/jd_small_home.js, cronexpr="16 22 * * *", timeout=3600, enable=true
+东东小窝 = type=cron,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_small_home.js, cronexpr="16 22 * * *", timeout=3600, enable=true
  */
 const $ = new Env('东东小窝');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -51,13 +51,7 @@ if ($.isNode()) {
   })
   if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {};
 } else {
-  let cookiesData = $.getdata('CookiesJD') || "[]";
-  cookiesData = jsonParse(cookiesData);
-  cookiesArr = cookiesData.map(item => item.cookie);
-  cookiesArr.reverse();
-  cookiesArr.push(...[$.getdata('CookieJD2'), $.getdata('CookieJD')]);
-  cookiesArr.reverse();
-  cookiesArr = cookiesArr.filter(item => item !== "" && item !== null && item !== undefined);
+  cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
 $.newShareCodes = [];
 const JD_API_HOST = 'https://lkyl.dianpusoft.cn/api';
@@ -88,6 +82,7 @@ const JD_API_HOST = 'https://lkyl.dianpusoft.cn/api';
       await smallHome();
     }
   }
+  await updateInviteCodeCDN('https://gitee.com/lxk0301/updateTeam/raw/master/shareCodes/jd_updateSmallHomeInviteCode.json');
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
@@ -148,12 +143,13 @@ async function doChannelsListTask(taskId, taskType) {
   }
 }
 async function helpFriends() {
-  await updateInviteCode();
-  if (!$.inviteCodes) await updateInviteCodeCDN();
-  if (!$.inviteCodes) await updateInviteCodeCDN('https://gitee.com/lxk0301/updateTeam/raw/master/jd_updateSmallHomeInviteCode.json');
-  for (let item of $.inviteCodes.inviteCode) {
-    if (!item) continue
-    await createAssistUser(item, $.createAssistUserID);
+  // await updateInviteCode();
+  // if (!$.inviteCodes) await updateInviteCodeCDN();
+  if ($.inviteCodes && $.inviteCodes['inviteCode']) {
+    for (let item of $.inviteCodes.inviteCode) {
+      if (!item) continue
+      await createAssistUser(item, $.createAssistUserID);
+    }
   }
 }
 async function doAllTask() {
@@ -804,7 +800,7 @@ function updateInviteCode(url = 'https://raw.githubusercontent.com/LXK9301/updat
 }
 function updateInviteCodeCDN(url) {
   return new Promise(async resolve => {
-    $.get({url}, async (err, resp, data) => {
+    $.get({url, headers:{"User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0")}}, async (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)

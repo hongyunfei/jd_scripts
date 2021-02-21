@@ -8,23 +8,23 @@
 京东秒秒币
 一天签到100币左右，100币可兑换1毛钱红包，推荐攒着配合农场一起用
 活动时间：长期活动
-更新地址：https://raw.githubusercontent.com/LXK9301/jd_scripts/master/jd_ms.js
+更新地址：https://gitee.com/lxk0301/jd_scripts/raw/master/jd_ms.js
 活动入口：京东app-京东秒杀-签到领红包
 脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
 ============Quantumultx===============
 [task_local]
 #京东秒秒币
-10 7 * * * https://raw.githubusercontent.com/LXK9301/jd_scripts/master/jd_ms.js, tag=京东秒秒币, img-url=https://raw.githubusercontent.com/yogayyy/Scripts/master/Icon/shylocks/jd_ms.jpg, enabled=true
+10 7 * * * https://gitee.com/lxk0301/jd_scripts/raw/master/jd_ms.js, tag=京东秒秒币, img-url=https://raw.githubusercontent.com/yogayyy/Scripts/master/Icon/shylocks/jd_ms.jpg, enabled=true
 
 ================Loon==============
 [Script]
-cron "10 7 * * *" script-path=https://raw.githubusercontent.com/LXK9301/jd_scripts/master/jd_ms.js,tag=京东秒秒币
+cron "10 7 * * *" script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_ms.js,tag=京东秒秒币
 
 ===============Surge=================
-京东秒秒币 = type=cron,cronexp="10 7 * * *",wake-system=1,timeout=200,script-path=https://raw.githubusercontent.com/LXK9301/jd_scripts/master/jd_ms.js
+京东秒秒币 = type=cron,cronexp="10 7 * * *",wake-system=1,timeout=200,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_ms.js
 
 ============小火箭=========
-京东秒秒币 = type=cron,script-path=https://raw.githubusercontent.com/LXK9301/jd_scripts/master/jd_ms.js, cronexpr="10 7 * * *", timeout=200, enable=true
+京东秒秒币 = type=cron,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_ms.js, cronexpr="10 7 * * *", timeout=200, enable=true
  */
 const $ = new Env('京东秒秒币');
 
@@ -41,13 +41,7 @@ if ($.isNode()) {
   };
   if(JSON.stringify(process.env).indexOf('GITHUB')>-1) process.exit(0)
 } else {
-  let cookiesData = $.getdata('CookiesJD') || "[]";
-  cookiesData = jsonParse(cookiesData);
-  cookiesArr = cookiesData.map(item => item.cookie);
-  cookiesArr.reverse();
-  cookiesArr.push(...[$.getdata('CookieJD2'), $.getdata('CookieJD')]);
-  cookiesArr.reverse();
-  cookiesArr = cookiesArr.filter(item => item !== "" && item !== null && item !== undefined);
+  cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
 !(async () => {
@@ -70,8 +64,6 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
 
         if ($.isNode()) {
           await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
-        } else {
-          $.setdata('', `CookieJD${i ? i + 1 : ""}`);//cookie失效，故清空cookie。$.setdata('', `CookieJD${i ? i + 1 : "" }`);//cookie失效，故清空cookie。
         }
         continue
       }
@@ -257,7 +249,7 @@ function taskPostUrl(function_id, body = {}, extra = '', function_id2) {
   }
   return {
     url,
-    body: `functionId=${function_id}&body=${escape(JSON.stringify(body))}&client=wh5&clientVersion=9.3.2&${extra}`,
+    body: `functionId=${function_id}&body=${escape(JSON.stringify(body))}&client=wh5&clientVersion=1.0.0&${extra}`,
     headers: {
       "Cookie": cookie,
       "origin": "https://h5.m.jd.com",
