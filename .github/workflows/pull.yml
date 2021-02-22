@@ -16,7 +16,7 @@ jobs:
       run: |
         sudo -E rm -rf /etc/apt/sources.list.d
         sudo -E apt-get update -y && apt-get install -y build-essential git git-core curl wget && apt-get clean -y
-        git config --global user.name 'GitHub Actions' && git config --global user.email 'noreply@github.com'
+        git config --global user.name 'GitHub Actions' && git config --global user.email 'hongyunfei@github.com'
     - name: Prepare
       run: |
         mkdir -p ~/.ssh
