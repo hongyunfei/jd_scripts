@@ -1,4 +1,4 @@
-FROM alpine:3.12
+FROM node:lts-alpine3.12
 
 LABEL AUTHOR="none" \
       VERSION=0.1.4
@@ -7,13 +7,14 @@ ARG KEY="-----BEGIN OPENSSH PRIVATE KEY-----\nb3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAA
 
 ENV DEFAULT_LIST_FILE=crontab_list.sh \
     CUSTOM_LIST_MERGE_TYPE=append \
+    COOKIES_LIST=/scripts/logs/cookies.list \
     REPO_URL=git@gitee.com:lxk0301/jd_scripts.git \
     REPO_BRANCH=master
 
 RUN set -ex \
     && apk update \
     && apk upgrade \
-    && apk add --no-cache tzdata git nodejs moreutils npm curl jq openssh-client \
+    && apk add --no-cache bash tzdata git moreutils curl jq openssh-client \
     && rm -rf /var/cache/apk/* \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone \
