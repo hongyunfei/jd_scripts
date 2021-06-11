@@ -3,10 +3,28 @@ crazy joy
 挂机领金币/宝箱专用
 活动入口：京东APP我的-更多工具-疯狂的JOY
 ⚠️建议云端使用。手机端不建议使用(会一直跑下去，永不停止)
-10 7 * * * https://gitee.com/lxk0301/jd_scripts/raw/master/jd_crazy_joy_coin.js
+疯狂JOY挂机脚本目前会自动合成34级JOY，
+合成条件如下：
+当存在8个34级JOY，并且剩余金币大于等于6Q，则此条件下合并两个34级JOY
+即可为后面继续合成两只新的34级JOY(按全部用30级JOY合成一只34级JOY计算需:166T * 2 * 2 * 2 * 2 = 2.6Q * 2(两只34级JOY) = 5.2Q，取6Q)时
+
+脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
+============Quantumultx===============
+[task_local]
+#crazyJoy挂机
+10 1,12 * * * https://gitee.com/lxk0301/jd_scripts/raw/master/jd_crazy_joy_coin.js, tag=crazyJoy挂机, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jd_crazy_joy.png, enabled=true
+
+================Loon==============
+[Script]
+cron "10 1,12 * * *" script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_crazy_joy_coin.js,tag=crazyJoy挂机
+
+===============Surge=================
+crazyJoy挂机 = type=cron,cronexp="10 1,12 * * *",wake-system=1,timeout=20,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_crazy_joy_coin.js
+
+============小火箭=========
+crazyJoy挂机 = type=cron,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_crazy_joy_coin.js, cronexpr="10 1,12 * * *", timeout=200, enable=true
 
  */
-
 
 const $ = new Env('crazyJoy挂机');
 const JD_API_HOST = 'https://api.m.jd.com/';
@@ -46,7 +64,7 @@ if ($.isNode()) {
     for (let i = 0; i < cookiesArr.length; i++) {
       if (cookiesArr[i]) {
         cookie = cookiesArr[i];
-        $.UserName = decodeURIComponent(cookie.match(/pt_pin=(.+?);/) && cookie.match(/pt_pin=(.+?);/)[1])
+        $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
         $.index = i + 1;
         $.isLogin = true;
         $.nickName = '';
@@ -634,7 +652,7 @@ function taskUrl(functionId, body = '', taskCookie = cookie) {
       'Host': 'api.m.jd.com',
       'Accept': '*/*',
       'Connection': 'keep-alive',
-      "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0"),
+      "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
       'Accept-Language': 'zh-cn',
       'Referer': 'https://crazy-joy.jd.com/',
       'origin': 'https://crazy-joy.jd.com',
@@ -667,7 +685,7 @@ function TotalBean() {
         "Connection": "keep-alive",
         "Cookie": cookie,
         "Referer": "https://wqs.jd.com/my/jingdou/my.shtml?sceneval=2",
-        "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.2.2;14.2;%E4%BA%AC%E4%B8%9C/9.2.2 CFNetwork/1206 Darwin/20.1.0")
+        "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1")
       }
     }
     $.post(options, (err, resp, data) => {
@@ -682,7 +700,11 @@ function TotalBean() {
               $.isLogin = false; //cookie过期
               return
             }
-            $.nickName = data['base'].nickname;
+            if (data['retcode'] === 0) {
+              $.nickName = (data['base'] && data['base'].nickname) || $.UserName;
+            } else {
+              $.nickName = $.UserName
+            }
           } else {
             console.log(`京东服务器返回空数据`)
           }
