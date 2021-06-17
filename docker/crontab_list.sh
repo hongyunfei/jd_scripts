@@ -4,6 +4,8 @@
 56 0,23 * * * docker_entrypoint.sh
 #收集助力码
 30 * * * * sh +x /scripts/docker/auto_help.sh collect >> /scripts/logs/auto_help_collect.log 2>&1
+#pk
+15 0,6,13,19,21 * * * node /scripts/pk.js >> /scripts/logs/pk.log 2>&1
 
 ##############短期活动##############
 #女装盲盒 活动时间：2021-05-24到2021-06-22
